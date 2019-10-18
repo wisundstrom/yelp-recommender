@@ -75,9 +75,9 @@ def biz_preference_state(driver, user_id, biz_id, state):
         # the business from users in the category
 
         sim_user = cypher(
-            driver, f"MATCH (u:User)-[:WROTE]->(r:Review)-[:REVIEWS]->(b:Business)\
-                          WHERE b.id='{biz_id}' and u.id IN {list(user_in_cat[i]['u.id'])}\
-                          RETURN r.stars, u.id", ['r.stars', 'u.id'])
+            driver, f'MATCH (u:User)-[:WROTE]->(r:Review)-[:REVIEWS]->(b:Business)\
+            WHERE b.id = "{biz_id}" and u.id IN {list(user_in_cat[i]["u.id"])}\
+            RETURN r.stars, u.id', ['r.stars', 'u.id'])
         reviews_in_cat.append(sim_user)
 
     # this loop and PRu below uses laplace smoothing and the distribution of biz reviews
@@ -141,9 +141,9 @@ def user_preference_state(driver, user_id, biz_id, state):
 
     # send a cypher query to the server that returns all of the biz's
     # categories
-    biz_categories = cypher(driver, f"\
+    biz_categories = cypher(driver, f'\
     MATCH (b:Business)-[:IN_CATEGORY]->(c:Category) \
-    WHERE b.id='{biz_id}' RETURN c.id", ['c.id'])
+    WHERE b.id="{biz_id}" RETURN c.id', ['c.id'])
 
     # these manipulate the biz categories and user's reviews for computation
     # later
@@ -156,9 +156,9 @@ def user_preference_state(driver, user_id, biz_id, state):
     for cat in cat_ids:
         # this loop sends a cypher query to retreive businesses in each
         # category in the state
-        temp = cypher(driver, f"\
+        temp = cypher(driver, f'\
         MATCH (s:State)<-[:IN_STATE]-(:City)<-[:IN_CITY]-(b:Business)-[:IN_CATEGORY]->(c:Category) \
-        WHERE c.id='{cat}' AND NOT b.id='{biz_id}' AND s.name='{state}' RETURN b.id", ['b.id'])
+        WHERE c.id="{cat}" AND NOT b.id="{biz_id}" AND s.name="{state}" RETURN b.id', ['b.id'])
         biz_in_cat.append(temp)
 
     reviews_in_cat = []
