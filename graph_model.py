@@ -242,6 +242,7 @@ def graph_model_predict(driver, user_id, biz_id, state=None):
         joint_prob = (biz_pref * user_pref) / sum(biz_pref * user_pref)
     return expected_rating(joint_prob)
 
+
 def biz_preference(driver, user_id, biz_id):
     """This function returns the estimated ratings probability distribution for a specific user and business,
     limited to ratings, users, and businesses in a specific state. The function takes the neo4j server
