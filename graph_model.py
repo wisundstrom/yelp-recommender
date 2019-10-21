@@ -36,6 +36,7 @@ def biz_preference_state(driver, user_id, biz_id, state):
     review_dist = cypher(
         driver,
         f"MATCH (s:State)<-[:REVIEWS_IN]-(u:User)-[:WROTE]->(r:Review)-[:REVIEWS]->(b:Business)\
+        M
         WHERE b.id='{biz_id}' AND s.name='{state}'\
         RETURN r.id, r.stars, u.id",
         [
