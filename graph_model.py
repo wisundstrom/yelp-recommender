@@ -129,7 +129,7 @@ def biz_preference(driver, user_id, biz_id):
         else:
             # If there are no users in a category we use the review
             # distribution without the conditional
-            print("empty")
+            
             for j in (1, 2, 3, 4, 5):
                 try:
                     cats_by_stars[i][j - 1] = review_stars[j]
@@ -206,7 +206,7 @@ def user_preference(driver, user_id, biz_id):
             
             temp_rev=review_dist.loc[review_dist['b.id']==temp_biz]
             
-            sim_biz.append(temp_rev['r.stars'].values)
+            sim_biz.append(temp_rev['r.stars'].values[0])
             
         reviews_in_cat.append(pd.DataFrame(sim_biz, columns=['r.stars']))
 
