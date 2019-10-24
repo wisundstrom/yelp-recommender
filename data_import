@@ -1,0 +1,39 @@
+This file contains the command line cypher queries I ran to import the yelp data from json files to the neo4j database. The code was tweaked slightly but mostly comes from https://neo4j.com/docs/graph-algorithms/current/yelp-example/
+
+
+CALL apoc.periodic.iterate("
+CALL apoc.load.json('file:///home/ubuntu/data_business') YIELD value RETURN value
+","
+MERGE (b:Business{id:value.business_id})
+SET b += apoc.map.clean(value, ['attributes','hours','business_id','categories','address','postal_code'],[])
+WITH b,value.categories as categories
+UNWIND split(categories, ',')as category
+MERGE (c:Category{id:category})
+MERGE (b)-[:IN_CATEGORY]->(c)
+",{batchSize: 6000, iterateList: true});
+
+
+CALL apoc.periodic.iterate("
+CALL apoc.load.json('file:///home/ubuntu/data')
+YIELD value RETURN value
+","
+MERGE (b:Business{id:value.business_id})
+MERGE (u:User{id:value.user_id})
+MERGE (r:Review{id:value.review_id})
+MERGE (u)-[:WROTE]->(r)
+MERGE (r)-[:REVIEWS]->(b)
+SET r += apoc.map.clean(value, ['business_id','user_id','review_id'],[0])
+",{batchSize: 10000, iterateList: true});
+
+CALL apoc.periodic.iterate("
+CALL apoc.load.json('file:///home/ubuntu/data_users')
+YIELD value RETURN value
+","
+MERGE (u:User{id:value.user_id})
+SET u += apoc.map.clean(value, ['user_id'],[0])
+WITH u,value.friends as friends
+UNWIND split(friends,',') as friend
+MERGE (u1:User{id:friend})
+MERGE (u)-[:FRIEND]-(u1)
+",{batchSize: 100, iterateList: true});
+
